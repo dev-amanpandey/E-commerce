@@ -1,0 +1,171 @@
+import { Link } from 'react-router-dom'
+import { Plus, Minus, Trash2, ShoppingBag } from 'lucide-react'
+import { useCart } from '../context/CartContext'
+
+const Cart = () => {
+  const { items, updateQuantity, removeFromCart, getTotalPrice, clearCart } = useCart()
+
+  if (items.length === 0) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center">
+          <ShoppingBag className="h-24 w-24 text-gray-300 mx-auto mb-6" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Your cart is empty</h1>
+          <p className="text-gray-600 mb-8">Looks like you haven't added any items to your cart yet.</p>
+          <Link
+            to="/products"
+            className="btn-primary text-lg px-8 py-3 inline-flex items-center"
+          >
+            Start Shopping
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Shopping Cart</h1>
+        <p className="text-gray-600">{items.length} items in your cart</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Cart Items */}
+        <div className="lg:col-span-2 space-y-4">
+          {items.map((item) => (
+            <div key={item.id} className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-shrink-0">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-24 h-24 object-cover rounded-lg"
+                  />
+                </div>
+                
+                <div className="flex-1 space-y-2">
+                  <h3 className="text-lg font-semibold text-gray-900">{item.name}</h3>
+                  <p className="text-gray-600 text-sm">{item.category}</p>
+                  <p className="text-xl font-bold text-primary-600">${item.price}</p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-end space-y-2 sm:space-y-0 sm:space-x-4">
+                  {/* Quantity Controls */}
+                  <div className="flex items-center border border-gray-300 rounded-lg">
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      className="px-3 py-2 text-gray-600 hover:text-gray-800"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
+                    <span className="px-4 py-2 border-x border-gray-300 min-w-[3rem] text-center">
+                      {item.quantity}
+                    </span>
+                    <button
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      className="px-3 py-2 text-gray-600 hover:text-gray-800"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
+
+                  {/* Remove Button */}
+                  <button
+                    onClick={() => removeFromCart(item.id)}
+                    className="text-red-500 hover:text-red-700 p-2"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Subtotal:</span>
+                  <span className="text-lg font-semibold">
+                    ${(item.price * item.quantity).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {/* Clear Cart Button */}
+          <div className="text-center">
+            <button
+              onClick={clearCart}
+              className="text-red-500 hover:text-red-700 font-medium"
+            >
+              Clear Cart
+            </button>
+          </div>
+        </div>
+
+        {/* Order Summary */}
+        <div className="lg:col-span-1">
+          <div className="bg-white rounded-lg shadow-md p-6 sticky top-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-6">Order Summary</h2>
+            
+            <div className="space-y-4">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Subtotal ({items.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
+                <span className="font-medium">${getTotalPrice().toFixed(2)}</span>
+              </div>
+              
+              <div className="flex justify-between">
+                <span className="text-gray-600">Shipping</span>
+                <span className="font-medium">
+                  {getTotalPrice() > 50 ? 'Free' : '$9.99'}
+                </span>
+              </div>
+              
+              <div className="flex justify-between">
+                <span className="text-gray-600">Tax</span>
+                <span className="font-medium">${(getTotalPrice() * 0.08).toFixed(2)}</span>
+              </div>
+              
+              <div className="border-t border-gray-200 pt-4">
+                <div className="flex justify-between text-lg font-bold">
+                  <span>Total</span>
+                  <span>${(getTotalPrice() + (getTotalPrice() > 50 ? 0 : 9.99) + (getTotalPrice() * 0.08)).toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 space-y-3">
+              <Link
+                to="/checkout"
+                className="w-full btn-primary text-center block py-3"
+              >
+                Proceed to Checkout
+              </Link>
+              <Link
+                to="/products"
+                className="w-full btn-secondary text-center block py-3"
+              >
+                Continue Shopping
+              </Link>
+            </div>
+
+            {/* Security Badges */}
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <div className="flex items-center justify-center space-x-4 text-xs text-gray-500">
+                <div className="flex items-center space-x-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>Secure Checkout</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>SSL Encrypted</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Cart
