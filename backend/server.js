@@ -3,11 +3,18 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './src/config/db.js';
 import authRoutes from './src/routes/authRoutes.js';
-import { DoorClosed } from 'lucide-react';
 //import { findDOMNode } from 'react-dom';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Prefer backend/.env when running node backend/server.js from workspace root.
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+// Also load root .env as a fallback if present.
 dotenv.config();
 
 const app = express();

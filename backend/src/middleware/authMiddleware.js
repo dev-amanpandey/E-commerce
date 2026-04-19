@@ -3,6 +3,7 @@ import User from '../models/User.js';
 
 export const protect = async (req, res, next) => {
   let token;
+  const jwtSecret = process.env.JWT_SECRET || 'dev_jwt_secret_change_me';
 
   // Support token in Authorization header: "Bearer <token>"
   if (
@@ -17,7 +18,7 @@ export const protect = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, jwtSecret);
 
     req.user = await User.findById(decoded.id).select('-password');
 

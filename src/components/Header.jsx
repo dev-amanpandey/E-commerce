@@ -75,6 +75,12 @@ const Header = () => {
                     Admin
                   </Link>
                 )}
+                <Link
+                  to="/profile"
+                  className="text-sm font-medium text-gray-700 hover:text-primary-600"
+                >
+                  Profile
+                </Link>
                 <span className="text-sm text-gray-700">Hi, {user?.name}</span>
                 <button
                   onClick={logout}
@@ -181,6 +187,13 @@ const Header = () => {
                       Admin
                     </Link>
                   )}
+                  <Link
+                    to="/profile"
+                    className="block px-3 py-2 text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md text-base font-medium"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Profile
+                  </Link>
                   <button
                     type="button"
                     onClick={() => {

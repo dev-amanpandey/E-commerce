@@ -1,14 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 const Signup = () => {
-  const { signup } = useAuth()
+  const { signup, isAuthenticated } = useAuth()
   const navigate = useNavigate()
 
   const [formData, setFormData] = useState({ name: '', email: '', password: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/profile', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
@@ -20,7 +26,7 @@ const Signup = () => {
     setIsSubmitting(true)
     try {
       await signup(formData)
-      navigate('/', { replace: true })
+      navigate('/profile', { replace: true })
     } catch (err) {
       setError(err.message || 'Signup failed')
     } finally {

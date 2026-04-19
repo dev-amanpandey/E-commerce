@@ -5,6 +5,16 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+const formatUser = (user) => ({
+  id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+  avatar: user.avatar || '',
+  createdAt: user.createdAt,
+  updatedAt: user.updatedAt,
+});
+
 // POST /api/auth/signup
 router.post('/signup', async (req, res) => {
   try {
@@ -26,12 +36,7 @@ router.post('/signup', async (req, res) => {
 
     res.status(201).json({
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
+      user: formatUser(user),
     });
   } catch (error) {
     console.error(error);
@@ -64,12 +69,7 @@ router.post('/login', async (req, res) => {
 
     res.json({
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
+      user: formatUser(user),
     });
   } catch (error) {
     console.error(error);
@@ -80,6 +80,52 @@ router.post('/login', async (req, res) => {
 // GET /api/auth/me
 router.get('/me', protect, async (req, res) => {
   res.json({ user: req.user });
+});
+
+// PUT /api/auth/profile
+router.put('/profile', protect, async (req, res) => {
+  try {
+    const { name, email, password, avatar } = req.body;
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser && String(existingUser._id) !== String(user._id)) {
+        return res.status(400).json({ message: 'Email already in use' });
+      }
+      user.email = email;
+    }
+
+    if (name) {
+      user.name = name;
+    }
+
+    if (typeof avatar === 'string') {
+      if (avatar.length > 1_000_000) {
+        return res.status(400).json({ message: 'Profile picture is too large' });
+      }
+      user.avatar = avatar;
+    }
+
+    if (password) {
+      if (password.length < 6) {
+        return res.status(400).json({ message: 'Password must be at least 6 characters' });
+      }
+      user.password = password;
+    }
+
+    const updatedUser = await user.save();
+
+    res.json({ user: formatUser(updatedUser) });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 export default router;
