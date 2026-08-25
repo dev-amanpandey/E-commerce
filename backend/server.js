@@ -26,7 +26,7 @@ connectDB();
 // Middleware
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+    origin: [process.env.CLIENT_ORIGIN || 'http://localhost:5173', 'https://e-commerce-lac-beta-32.vercel.app/'],
     credentials: true,
   })
 );
