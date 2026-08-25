@@ -77,11 +77,21 @@ const Header = () => {
                 )}
                 <Link
                   to="/profile"
-                  className="text-sm font-medium text-gray-700 hover:text-primary-600"
+                  className="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary-600"
                 >
-                  Profile
+                  <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-primary-700 font-semibold">
+                    {user?.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt={user.name || 'User profile'}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <span>{(user?.name || 'U').charAt(0).toUpperCase()}</span>
+                    )}
+                  </span>
+                  <span>My profile</span>
                 </Link>
-                <span className="text-sm text-gray-700">Hi, {user?.name}</span>
                 <button
                   onClick={logout}
                   className="text-sm font-medium text-gray-600 hover:text-primary-600"
@@ -189,10 +199,17 @@ const Header = () => {
                   )}
                   <Link
                     to="/profile"
-                    className="block px-3 py-2 text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md text-base font-medium"
+                    className="flex items-center gap-3 px-3 py-2 text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md text-base font-medium"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Profile
+                    <span className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full bg-primary-100 text-primary-700 font-semibold">
+                      {user?.avatar ? (
+                        <img src={user.avatar} alt={user.name || 'User profile'} className="h-full w-full object-cover" />
+                      ) : (
+                        <span>{(user?.name || 'U').charAt(0).toUpperCase()}</span>
+                      )}
+                    </span>
+                    <span>My profile</span>
                   </Link>
                   <button
                     type="button"

@@ -2,10 +2,14 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { CreditCard, Lock, ArrowLeft } from 'lucide-react'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
 
 const Checkout = () => {
   const navigate = useNavigate()
   const { items, getTotalPrice, clearCart } = useCart()
+  const { token } = useAuth()
   const [formData, setFormData] = useState({
     email: '',
     firstName: '',
@@ -32,14 +36,44 @@ const Checkout = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsProcessing(true)
-    
-    // Simulate payment processing
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    // Clear cart and redirect to success page
-    clearCart()
-    alert('Order placed successfully! Thank you for your purchase.')
-    navigate('/')
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/orders`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          items,
+          shippingAddress: {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            email: formData.email,
+            address: formData.address,
+            city: formData.city,
+            state: formData.state,
+            zipCode: formData.zipCode,
+            phone: formData.phone,
+          },
+          total: total,
+          paymentMethod: 'Card',
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Unable to place order')
+      }
+
+      clearCart()
+      navigate(`/track-order?id=${data.order._id}`)
+    } catch (error) {
+      alert(error.message || 'Something went wrong while placing your order.')
+    } finally {
+      setIsProcessing(false)
+    }
   }
 
   if (items.length === 0) {

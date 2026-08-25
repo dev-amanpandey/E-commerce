@@ -9,6 +9,7 @@ import Checkout from './pages/Checkout'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Profile from './pages/Profile'
+import OrderTracking from './pages/OrderTracking'
 import AdminDashboard from './pages/AdminDashboard'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
@@ -41,6 +42,14 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/track-order"
+                element={
+                  <ProtectedRoute>
+                    <OrderTracking />
                   </ProtectedRoute>
                 }
               />

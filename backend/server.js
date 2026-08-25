@@ -7,6 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import connectDB from './src/config/db.js';
 import authRoutes from './src/routes/authRoutes.js';
+import orderRoutes from './src/routes/orderRoutes.js';
 //import { findDOMNode } from 'react-dom';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -35,6 +36,7 @@ app.use(morgan('dev'));
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/orders', orderRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'E-commerce API is running' });
