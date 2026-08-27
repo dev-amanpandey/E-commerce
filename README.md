@@ -1,4 +1,4 @@
-# E-Commerce Website
+# Shopeasy
 
 A fully responsive e-commerce website built with React and Tailwind CSS. This project features a modern design with complete shopping functionality including product browsing, cart management, and checkout process.
 
